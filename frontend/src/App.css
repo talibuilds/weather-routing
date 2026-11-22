@@ -1,0 +1,193 @@
+/* App Layout & Core Styling */
+.spotter-app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0a0a0f;
+  color: #e2e8f0;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Main Body Layout: Left Sidebar 380px + Right Map */
+.app-main-layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Left Sidebar Panel (380px) */
+.app-sidebar {
+  width: 380px;
+  min-width: 380px;
+  max-width: 380px;
+  height: 100%;
+  background: #0d0d14;
+  border-right: 1px solid #1e1e2e;
+  display: flex;
+  flex-direction: column;
+  z-index: 500;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.sidebar-scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Custom Scrollbars */
+.sidebar-scrollable-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scrollable-content::-webkit-scrollbar-track {
+  background: #0d0d14;
+}
+
+.sidebar-scrollable-content::-webkit-scrollbar-thumb {
+  background: #1f1f30;
+  border-radius: 3px;
+}
+
+.sidebar-scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: #2a2a40;
+}
+
+/* Route Results Container */
+.routes-results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #1a1a27;
+}
+
+.results-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.results-icon {
+  color: #818cf8;
+}
+
+.results-title {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.results-count-badge {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  background: #161622;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #202030;
+  white-space: nowrap;
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.route-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.empty-routes-state {
+  background: #12121a;
+  border: 1px dashed #242438;
+  border-radius: 10px;
+  padding: 28px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.empty-icon {
+  color: #6366f1;
+  opacity: 0.7;
+}
+
+/* Right Map & Timeline Section */
+.app-map-section {
+  flex: 1;
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.map-container-area {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Docked Weather Timeline at Bottom */
+.timeline-docked-container {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 280px; /* Leaves space for bottom-right map legend */
+  z-index: 1000;
+  animation: timeline-dock-in 0.35s ease-out;
+}
+
+@keyframes timeline-dock-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .app-main-layout {
+    flex-direction: column;
+  }
+
+  .app-sidebar {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: 45vh;
+  }
+
+  .app-map-section {
+    height: 55vh;
+  }
+
+  .timeline-docked-container {
+    right: 20px;
+    bottom: 10px;
+  }
+}

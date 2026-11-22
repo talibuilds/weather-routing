@@ -1,0 +1,258 @@
+/* WeatherTimeline styles */
+.weather-timeline-panel {
+  background: rgba(18, 18, 26, 0.92);
+  border: 1px solid #232336;
+  border-radius: 12px;
+  padding: 12px 18px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  user-select: none;
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timeline-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.timeline-fire-icon {
+  color: #f97316;
+}
+
+.timeline-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.timeline-range-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: #181824;
+  color: #94a3b8;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #232336;
+}
+
+.timeline-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heatmap-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #161622;
+  border: 1px solid #26263a;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.heatmap-toggle-btn:hover {
+  background: #1e1e2e;
+  color: #e2e8f0;
+}
+
+.heatmap-toggle-btn.active {
+  background: rgba(99, 102, 241, 0.16);
+  border-color: #6366f1;
+  color: #a5b4fc;
+}
+
+.timeline-scrubber-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.scrubber-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.play-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #6366f1;
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+}
+
+.play-btn:hover {
+  background: #4f46e5;
+  transform: scale(1.04);
+}
+
+.play-btn.playing {
+  background: #f59e0b;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+
+.step-btn {
+  height: 28px;
+  padding: 0 8px;
+  background: #181826;
+  border: 1px solid #28283c;
+  color: #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.step-btn:hover:not(:disabled) {
+  background: #242438;
+  color: #ffffff;
+  border-color: #6366f1;
+}
+
+.step-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.reset-btn {
+  padding: 0 6px;
+}
+
+.slider-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.slider-track-container {
+  position: relative;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.timeline-range-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #1a1a28;
+  outline: none;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  margin: 0;
+}
+
+.timeline-range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #6366f1;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.8);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.timeline-range-input::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #818cf8;
+}
+
+.timeline-range-input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #6366f1;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.8);
+  cursor: pointer;
+}
+
+.slider-fill-bar {
+  position: absolute;
+  top: 7px;
+  left: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #6366f1 0%, #a855f7 100%);
+  border-radius: 3px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.timeline-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #64748b;
+  font-weight: 500;
+  padding: 0 2px;
+}
+
+.timeline-timestamp-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 150px;
+}
+
+.offset-display {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.offset-number {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.offset-unit {
+  font-size: 0.7rem;
+  color: #818cf8;
+  font-weight: 700;
+}
+
+.full-timestamp {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  color: #94a3b8;
+  white-space: nowrap;
+}
