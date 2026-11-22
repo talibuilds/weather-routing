@@ -1,43 +1,105 @@
 import React, { useState } from 'react';
-import { Truck, ShieldCheck, Info, X, Wind, CloudRain, CloudSnow } from 'lucide-react';
+import {
+  Truck,
+  ShieldCheck,
+  Info,
+  X,
+  Wind,
+  CloudRain,
+  CloudSnow,
+  HelpCircle,
+  Home,
+  Navigation,
+} from 'lucide-react';
 import './Header.css';
 
-const Header = ({ backendOnline = true }) => {
+/**
+ * Header component:
+ * Top bar with branding, landing vs console view toggle, guided tour trigger,
+ * API health indicator, and Safety Rules modal.
+ */
+const Header = ({
+  backendOnline = true,
+  currentView = 'landing', // 'landing' | 'app'
+  onSwitchView,
+  onOpenTour,
+}) => {
   const [showRulesModal, setShowRulesModal] = useState(false);
 
   return (
     <header className="app-header">
-      <div className="header-brand">
+      {/* Brand logo & title */}
+      <div
+        className="header-brand"
+        onClick={() => onSwitchView && onSwitchView('landing')}
+        style={{ cursor: 'pointer' }}
+        title="Go to Overview Landing Page"
+      >
         <div className="brand-logo-glow">
-          <Truck className="brand-icon" size={24} />
+          <Truck className="brand-icon" size={22} />
         </div>
         <div className="brand-text">
           <div className="brand-title-row">
             <h1 className="brand-title">SPOTTER</h1>
             <span className="brand-tag">WEATHER ROUTING</span>
           </div>
-          <p className="brand-subtitle">Intelligent Hazard-Aware Fleet Optimization</p>
+          <p className="brand-subtitle">Commercial Hazard-Aware Fleet Dispatch</p>
         </div>
       </div>
 
+      {/* Action buttons */}
       <div className="header-actions">
-        <div className="status-indicator">
+        {/* View Switcher: Overview vs Console */}
+        {currentView === 'landing' ? (
+          <button
+            className="view-toggle-btn launch-accent"
+            onClick={() => onSwitchView('app')}
+            title="Open Interactive Route Dispatch Console"
+          >
+            <Navigation size={15} />
+            <span>Launch Dispatcher</span>
+          </button>
+        ) : (
+          <button
+            className="view-toggle-btn overview-accent"
+            onClick={() => onSwitchView('landing')}
+            title="Back to Overview & Features"
+          >
+            <Home size={15} />
+            <span>Overview</span>
+          </button>
+        )}
+
+        {/* Guided Tour Trigger */}
+        <button
+          className="header-tour-btn"
+          onClick={onOpenTour}
+          title="Start Step-by-Step Interactive Walkthrough"
+        >
+          <HelpCircle size={15} />
+          <span className="hide-on-mobile">Guided Tour</span>
+        </button>
+
+        {/* Status Indicator */}
+        <div className="status-indicator" title={backendOnline ? 'Connected to Django Backend API' : 'Using Local Simulation Fallback'}>
           <span className={`status-dot ${backendOnline ? 'online' : 'offline'}`} />
-          <span className="status-text">
-            {backendOnline ? 'API Connected' : 'Demo Mode (Offline)'}
+          <span className="status-text hide-on-mobile">
+            {backendOnline ? 'API Online' : 'Simulation'}
           </span>
         </div>
 
+        {/* Safety Rules Modal Trigger */}
         <button
           className="rules-modal-btn"
           onClick={() => setShowRulesModal(true)}
           title="View Weather & Load Safety Rules"
         >
-          <Info size={16} />
-          <span>Safety Rules</span>
+          <Info size={15} />
+          <span className="hide-on-mobile">Rules</span>
         </button>
       </div>
 
+      {/* Safety Rules Reference Modal */}
       {showRulesModal && (
         <div className="modal-overlay" onClick={() => setShowRulesModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -117,7 +179,7 @@ const Header = ({ backendOnline = true }) => {
                   <div className="load-rule-card critical">
                     <span className="rule-badge red">&ge; 55 mph</span>
                     <p className="rule-desc">
-                      <strong>No Travel</strong> regardless of load weight (critical tipping & blowover hazard).
+                      <strong>No Travel</strong> regardless of load weight (critical blowover hazard).
                     </p>
                   </div>
                   <div className="load-rule-card critical">

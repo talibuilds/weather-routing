@@ -10,7 +10,59 @@
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Main Body Layout: Left Sidebar 380px + Right Map */
+/* Console Wrapper */
+.app-console-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Mobile Tab Switcher: Hidden on Desktop (>=1024px), Visible on Mobile/Tablet */
+.mobile-layout-tabs {
+  display: none;
+  background: #11111a;
+  border-bottom: 1px solid #1e1e2e;
+  padding: 6px 12px;
+  gap: 8px;
+  z-index: 600;
+  flex-shrink: 0;
+}
+
+.mobile-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #161622;
+  border: 1px solid #242436;
+  color: #94a3b8;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mobile-tab-btn.active {
+  background: #6366f1;
+  color: #ffffff;
+  border-color: #6366f1;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+}
+
+.tab-pill {
+  font-size: 0.65rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+/* Main Body Layout: Left Sidebar (380px) + Right Map */
 .app-main-layout {
   flex: 1;
   display: flex;
@@ -30,6 +82,7 @@
   flex-direction: column;
   z-index: 500;
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.25s ease;
 }
 
 .sidebar-scrollable-content {
@@ -112,23 +165,58 @@
   gap: 12px;
 }
 
+/* Empty State */
 .empty-routes-state {
   background: #12121a;
   border: 1px dashed #242438;
-  border-radius: 10px;
-  padding: 28px 20px;
+  border-radius: 12px;
+  padding: 30px 20px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
   color: #94a3b8;
-  font-size: 0.8rem;
 }
 
 .empty-icon {
   color: #6366f1;
-  opacity: 0.7;
+  opacity: 0.75;
+}
+
+.empty-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.empty-subtitle {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #94a3b8;
+  margin: 0 0 8px 0;
+}
+
+.empty-quick-demo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #181826;
+  border: 1px solid #28283e;
+  color: #c7d2fe;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.empty-quick-demo-btn:hover {
+  background: #202034;
+  border-color: #6366f1;
+  color: #ffffff;
 }
 
 /* Right Map & Timeline Section */
@@ -169,25 +257,74 @@
   }
 }
 
-/* Responsive adjustments */
+/* ==========================================================
+   RESPONSIVE LAYOUT MEDIA QUERIES
+   ========================================================== */
+
+/* Tablets & Mobile (<1024px) */
 @media (max-width: 1024px) {
+  .mobile-layout-tabs {
+    display: flex;
+  }
+
   .app-main-layout {
     flex-direction: column;
+    position: relative;
   }
 
   .app-sidebar {
     width: 100%;
     min-width: 100%;
     max-width: 100%;
-    height: 45vh;
+    border-right: none;
+    position: absolute;
+    inset: 0;
+  }
+
+  .app-sidebar.mobile-hidden {
+    display: none;
+  }
+
+  .app-sidebar.mobile-visible {
+    display: flex;
   }
 
   .app-map-section {
-    height: 55vh;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+  }
+
+  .app-map-section.mobile-hidden {
+    display: none;
+  }
+
+  .app-map-section.mobile-visible {
+    display: flex;
   }
 
   .timeline-docked-container {
-    right: 20px;
-    bottom: 10px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+}
+
+/* Small Mobile Screens (<640px) */
+@media (max-width: 640px) {
+  .sidebar-scrollable-content {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .results-count-badge {
+    max-width: 110px;
+  }
+
+  .timeline-docked-container {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
   }
 }
