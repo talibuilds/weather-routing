@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import './GuidedTour.css';
 
 /**
@@ -228,9 +228,9 @@ const GuidedTour = ({
                 <ChevronRight size={16} />
               </button>
             ) : (
-              <button className="tour-next-btn success" onClick={onFinishAndRun}>
-                <Play size={14} />
-                <span>Run Demo</span>
+              <button className="tour-next-btn finish-btn" onClick={onFinishAndRun}>
+                <span>Finish</span>
+                <Check size={16} />
               </button>
             )}
           </div>

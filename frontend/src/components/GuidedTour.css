@@ -212,11 +212,11 @@
   box-shadow: 0 6px 16px rgba(34, 197, 94, 0.45);
 }
 
-.tour-next-btn.success {
-  background: #3b82f6;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+.tour-next-btn.finish-btn {
+  background: #22c55e;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.45);
 }
 
-.tour-next-btn.success:hover {
-  background: #2563eb;
+.tour-next-btn.finish-btn:hover {
+  background: #16a34a;
 }
