@@ -10,7 +10,6 @@ import {
   ArrowRight,
   Play,
   Layers,
-  MapPin,
   CheckCircle2,
   Zap,
 } from 'lucide-react';
