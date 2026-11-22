@@ -196,7 +196,7 @@ function App() {
                 <RouteForm onSubmit={handleRouteSubmit} isLoading={isLoading} />
 
                 {/* Generated Routes Header & Cards */}
-                <div className="routes-results-container">
+                <div className="routes-results-container" id="tour-step-routes">
                   <div className="results-header">
                     <div className="results-title-group">
                       <Layers size={16} className="results-icon" />
@@ -276,7 +276,7 @@ function App() {
               </div>
 
               {/* Floating Weather Forecast Timeline */}
-              <div className="timeline-docked-container">
+              <div className="timeline-docked-container" id="tour-step-timeline">
                 <WeatherTimeline
                   hourOffset={forecastHour}
                   onChange={setForecastHour}
@@ -298,6 +298,7 @@ function App() {
           onPrev={handlePrevTourStep}
           onClose={() => setIsTourOpen(false)}
           onFinishAndRun={handleFinishAndRun}
+          onChangeTab={setMobileTab}
         />
       )}
     </div>

@@ -144,7 +144,7 @@ const RouteForm = ({ onSubmit, isLoading }) => {
 
       <form onSubmit={handleSubmit} className="route-form">
         {/* Origin & Destination with Swap button */}
-        <div className="locations-wrapper">
+        <div className="locations-wrapper" id="tour-step-locations">
           <div className="form-field">
             <label className="field-label" htmlFor="origin-input">
               <span className="label-icon-wrap origin-dot">
@@ -218,7 +218,7 @@ const RouteForm = ({ onSubmit, isLoading }) => {
         </div>
 
         {/* Load Weight Slider */}
-        <div className="form-field">
+        <div className="form-field" id="tour-step-weight">
           <div className="field-header-row">
             <label className="field-label" htmlFor="load-weight-input">
               <Weight size={14} className="field-icon" />
@@ -256,7 +256,7 @@ const RouteForm = ({ onSubmit, isLoading }) => {
         </div>
 
         {/* Sampling Interval Selector */}
-        <div className="form-field">
+        <div className="form-field" id="tour-step-sampling">
           <label className="field-label">
             <Ruler size={14} className="field-icon" />
             Checkpoint Sampling Frequency
@@ -281,6 +281,7 @@ const RouteForm = ({ onSubmit, isLoading }) => {
 
         {/* Submit Button */}
         <button
+          id="tour-step-submit"
           type="submit"
           disabled={isLoading}
           className={`submit-route-btn ${isLoading ? 'loading' : ''}`}

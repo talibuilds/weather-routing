@@ -1,73 +1,54 @@
-import React from 'react';
-import {
-  Sparkles,
-  MapPin,
-  Truck,
-  Ruler,
-  Layers,
-  Flame,
-  ChevronRight,
-  ChevronLeft,
-  X,
-  Play,
-} from 'lucide-react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import './GuidedTour.css';
 
 /**
- * GuidedTour component:
- * Step-by-step interactive onboarding for first-time / guest users.
- * Explains each core control, risk calculations, and map features.
+ * Interactive Guided Tour
+ * Positions spotlight and anchored tooltip right onto the target UI section,
+ * matching real-world interactive onboarding (e.g. Shepherd / Driver.js).
  */
 const TOUR_STEPS = [
   {
-    step: 1,
-    icon: MapPin,
-    iconColor: '#6366f1',
-    badge: 'Step 1 of 5 • Route Endpoints',
+    targetId: 'tour-step-locations',
+    tab: 'form',
     title: 'Define Origin & Destination',
-    description:
-      'Enter any US cities (e.g. Chicago, IL to Denver, CO) or click one of the quick scenario chips. Use the swap button to reverse directions in one click.',
-    highlightHint: 'Look at the top of the sidebar under Trip Parameters.',
+    text: 'Enter your departure and arrival cities, or pick from quick presets like Chicago → Denver. Swap origin and destination with one click.',
+    preferredPlacement: 'right',
   },
   {
-    step: 2,
-    icon: Truck,
-    iconColor: '#f59e0b',
-    badge: 'Step 2 of 5 • Physics & Load Weight',
-    title: 'Freight Weight & Blowover Limits',
-    description:
-      'Use the weight slider from 5,000 to 80,000 lbs. Notice how heavy loads (>30k and >40k lbs) dynamically escalate wind risk levels to prevent crosswind rollovers.',
-    highlightHint: 'Slide weight above 40,000 lbs to see strict wind penalties engage.',
+    targetId: 'tour-step-weight',
+    tab: 'form',
+    title: 'Freight Weight & Tipping Limits',
+    text: 'Adjust your truck cargo weight. Notice how loads over 30,000 lbs and 40,000 lbs dynamically trigger strict crosswind safety thresholds.',
+    preferredPlacement: 'right',
   },
   {
-    step: 3,
-    icon: Ruler,
-    iconColor: '#10b981',
-    badge: 'Step 3 of 5 • Checkpoint Sampling',
-    title: 'Time-Synchronized Weather Sampling',
-    description:
-      'Choose sampling frequency every 10, 25, or 50 miles. Spotter calculates your truck’s arrival ETA at each checkpoint and queries Open-Meteo for microclimate conditions at that exact hour.',
-    highlightHint: '25 miles is recommended for interstate logistics runs.',
+    targetId: 'tour-step-sampling',
+    tab: 'form',
+    title: 'Checkpoint Sampling Frequency',
+    text: 'Choose weather sampling every 10, 25, or 50 miles. Spotter models your arrival ETA at each checkpoint to query time-synchronized weather.',
+    preferredPlacement: 'right',
   },
   {
-    step: 4,
-    icon: Layers,
-    iconColor: '#818cf8',
-    badge: 'Step 4 of 5 • Route Comparison',
-    title: '3 Corridors & Safety Recommendation',
-    description:
-      'Click "Find Safest Route" to generate 3 options. The algorithm evaluates mileage exposed to Severe or No Travel weather and recommends the safest path with detailed justifications.',
-    highlightHint: 'Click on any Route Card to view its checkpoints on the map.',
+    targetId: 'tour-step-submit',
+    tab: 'form',
+    title: 'Find Safest Corridor',
+    text: 'Click "Find Safest Route" to synthesize 3 alternative highway paths, sample checkpoints, and rank them by the safety hierarchy.',
+    preferredPlacement: 'right',
   },
   {
-    step: 5,
-    icon: Flame,
-    iconColor: '#ef4444',
-    badge: 'Step 5 of 5 • Forecast Heatmap',
-    title: '0–48 Hour Corridor Radar Heatmap',
-    description:
-      'Use the bottom timeline slider or press Play to animate weather movement across the next 48 hours. See whether departing in 3 hours avoids approaching storm fronts.',
-    highlightHint: 'Click on any radar circle on the map to inspect weather variables.',
+    targetId: 'tour-step-routes',
+    tab: 'form',
+    title: 'Corridor Safety Comparison',
+    text: 'Review the 3 route options with color-coded risk mileage breakdown. The safest path is highlighted with the recommendation ribbon.',
+    preferredPlacement: 'right',
+  },
+  {
+    targetId: 'tour-step-timeline',
+    tab: 'map',
+    title: '48-Hour Corridor Heatmap',
+    text: 'Scrub the timeline or hit Play to watch moving weather radar circles along the highway corridor over the next 48 hours.',
+    preferredPlacement: 'top',
   },
 ];
 
@@ -77,73 +58,179 @@ const GuidedTour = ({
   onPrev,
   onClose,
   onFinishAndRun,
+  onChangeTab,
 }) => {
-  const current = TOUR_STEPS[currentStep] || TOUR_STEPS[0];
-  const IconComponent = current.icon;
+  const [targetRect, setTargetRect] = useState(null);
+  const [placement, setPlacement] = useState('right');
+  const [tooltipPos, setTooltipPos] = useState({ top: 100, left: 100 });
+  const tooltipRef = useRef(null);
+
+  const stepData = TOUR_STEPS[currentStep] || TOUR_STEPS[0];
   const isFirst = currentStep === 0;
   const isLast = currentStep === TOUR_STEPS.length - 1;
 
+  // Measure and update target position
+  const updatePosition = useCallback(() => {
+    if (!stepData) return;
+
+    // Switch tab on mobile if target is in a different view tab
+    if (onChangeTab && stepData.tab) {
+      onChangeTab(stepData.tab);
+    }
+
+    const el = document.getElementById(stepData.targetId);
+    if (!el) {
+      setTargetRect(null);
+      return;
+    }
+
+    // Scroll target into view
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+
+    const rect = el.getBoundingClientRect();
+    setTargetRect(rect);
+
+    // Compute tooltip placement
+    const tooltipEl = tooltipRef.current;
+    const ttWidth = tooltipEl ? tooltipEl.offsetWidth : 340;
+    const ttHeight = tooltipEl ? tooltipEl.offsetHeight : 180;
+    const padding = 16;
+    const windowW = window.innerWidth;
+    const windowH = window.innerHeight;
+
+    let computedPlacement = stepData.preferredPlacement || 'right';
+    let top = 0;
+    let left = 0;
+
+    // Mobile fallback: always place below or above target
+    if (windowW < 900) {
+      if (rect.bottom + ttHeight + padding < windowH) {
+        computedPlacement = 'bottom';
+        top = rect.bottom + 12;
+        left = Math.max(padding, Math.min(windowW - ttWidth - padding, rect.left));
+      } else {
+        computedPlacement = 'top';
+        top = Math.max(padding, rect.top - ttHeight - 12);
+        left = Math.max(padding, Math.min(windowW - ttWidth - padding, rect.left));
+      }
+    } else {
+      // Desktop placement
+      if (computedPlacement === 'right') {
+        left = rect.right + 16;
+        top = rect.top + rect.height / 2 - ttHeight / 2;
+
+        // If overflowing right edge, flip to bottom or left
+        if (left + ttWidth > windowW - padding) {
+          if (rect.left - ttWidth - 16 > padding) {
+            computedPlacement = 'left';
+            left = rect.left - ttWidth - 16;
+          } else {
+            computedPlacement = 'bottom';
+            left = Math.max(padding, rect.left);
+            top = rect.bottom + 14;
+          }
+        }
+      } else if (computedPlacement === 'top') {
+        top = rect.top - ttHeight - 14;
+        left = rect.left + rect.width / 2 - ttWidth / 2;
+        if (top < padding) {
+          computedPlacement = 'bottom';
+          top = rect.bottom + 14;
+        }
+      } else if (computedPlacement === 'bottom') {
+        top = rect.bottom + 14;
+        left = rect.left + rect.width / 2 - ttWidth / 2;
+        if (top + ttHeight > windowH - padding) {
+          computedPlacement = 'top';
+          top = rect.top - ttHeight - 14;
+        }
+      }
+
+      // Keep within viewport bounds
+      top = Math.max(padding, Math.min(windowH - ttHeight - padding, top));
+      left = Math.max(padding, Math.min(windowW - ttWidth - padding, left));
+    }
+
+    setPlacement(computedPlacement);
+    setTooltipPos({ top, left });
+  }, [stepData, onChangeTab]);
+
+  useEffect(() => {
+    // Small delay to allow any tab switch or scroll to finish
+    const timer = setTimeout(updatePosition, 80);
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [updatePosition]);
+
   return (
-    <div className="tour-overlay">
-      <div className="tour-modal">
-        {/* Header */}
-        <div className="tour-modal-header">
-          <div className="tour-badge-row">
-            <span className="tour-step-badge">{current.badge}</span>
-          </div>
-          <button className="tour-close-btn" onClick={onClose} title="Skip Tour">
-            <X size={18} />
-          </button>
+    <div className="anchored-tour-root">
+      {/* Target Cutout Spotlight */}
+      {targetRect && (
+        <div
+          className="spotlight-cutout"
+          style={{
+            top: targetRect.top - 6,
+            left: targetRect.left - 6,
+            width: targetRect.width + 12,
+            height: targetRect.height + 12,
+          }}
+        >
+          <span className="spotlight-pulse-border" />
+        </div>
+      )}
+
+      {/* Anchored Tooltip Card */}
+      <div
+        ref={tooltipRef}
+        className={`anchored-tooltip-card placement-${placement}`}
+        style={{
+          top: tooltipPos.top,
+          left: tooltipPos.left,
+        }}
+      >
+        {/* Pointer Arrow */}
+        <div className={`tooltip-pointer-arrow arrow-${placement}`} />
+
+        {/* Card Content */}
+        <div className="tooltip-header-row">
+          <h4 className="tooltip-title">{stepData.title}</h4>
         </div>
 
-        {/* Body */}
-        <div className="tour-modal-body">
-          <div
-            className="tour-icon-wrap"
-            style={{ backgroundColor: `${current.iconColor}22`, color: current.iconColor }}
-          >
-            <IconComponent size={26} />
-          </div>
+        <p className="tooltip-text">{stepData.text}</p>
 
-          <h3 className="tour-title">{current.title}</h3>
-          <p className="tour-desc">{current.description}</p>
+        {/* Bottom Actions Row (Matches TapTap Demo style) */}
+        <div className="tooltip-bottom-bar">
+          <span className="step-counter-text">
+            <strong>{currentStep + 1}</strong> / {TOUR_STEPS.length}
+          </span>
 
-          <div className="tour-hint-box">
-            <Sparkles size={14} className="hint-icon" />
-            <span className="hint-text"><strong>Tip:</strong> {current.highlightHint}</span>
-          </div>
-        </div>
-
-        {/* Footer with Step Dots & Controls */}
-        <div className="tour-modal-footer">
-          <div className="tour-dots">
-            {TOUR_STEPS.map((_, idx) => (
-              <span
-                key={idx}
-                className={`tour-dot ${idx === currentStep ? 'active' : ''}`}
-              />
-            ))}
-          </div>
-
-          <div className="tour-actions">
-            <button
-              className="tour-btn secondary"
-              onClick={onPrev}
-              disabled={isFirst}
-            >
-              <ChevronLeft size={16} />
-              <span>Back</span>
+          <div className="tooltip-btn-group">
+            <button className="tour-text-btn" onClick={onClose}>
+              Skip tour
             </button>
 
+            {!isFirst && (
+              <button className="tour-back-btn" onClick={onPrev} title="Previous step">
+                <ChevronLeft size={16} />
+                <span>Back</span>
+              </button>
+            )}
+
             {!isLast ? (
-              <button className="tour-btn primary" onClick={onNext}>
+              <button className="tour-next-btn" onClick={onNext}>
                 <span>Next</span>
                 <ChevronRight size={16} />
               </button>
             ) : (
-              <button className="tour-btn success" onClick={onFinishAndRun}>
+              <button className="tour-next-btn success" onClick={onFinishAndRun}>
                 <Play size={14} />
-                <span>Run Demo Route</span>
+                <span>Run Demo</span>
               </button>
             )}
           </div>
