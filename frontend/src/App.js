@@ -3,7 +3,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { Layers, AlertCircle, Map as MapIcon, SlidersHorizontal, Sparkles } from 'lucide-react';
 import Header from './components/Header';
 import LandingPage from './components/LandingPage';
-import GuidedTour from './components/GuidedTour';
+import GuidedTour, { TOUR_STEPS } from './components/GuidedTour';
 import RouteForm from './components/RouteForm';
 import RouteCard from './components/RouteCard';
 import MapView from './components/MapView';
@@ -129,7 +129,7 @@ function App() {
   };
 
   const handleNextTourStep = () => {
-    setTourStep((prev) => Math.min(prev + 1, 4));
+    setTourStep((prev) => Math.min(prev + 1, TOUR_STEPS.length - 1));
   };
 
   const handlePrevTourStep = () => {
